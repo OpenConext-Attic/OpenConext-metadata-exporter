@@ -38,22 +38,25 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
 
   @Test
   public void testNotModified() throws Exception {
-    HttpHeaders headers = new PrePopulatedJsonHttpHeaders(new String[]{
-        HttpHeaders.IF_MODIFIED_SINCE, RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneId.of("GMT")).minusMinutes(60))
-    });
-    RequestEntity requestEntity = new RequestEntity(headers, HEAD, new URI("http://localhost:" + port + "/identity-providers.json"));
-    HttpStatus statusCode = restTemplate.exchange(requestEntity, String.class).getStatusCode();
-    assertEquals(HttpStatus.OK, statusCode);
+    ZonedDateTime gmt = ZonedDateTime.now(ZoneId.of("GMT")).minusMinutes(60);
+    doTestModified(gmt, HttpStatus.OK, "/identity-providers.json");
+    doTestModified(gmt, HttpStatus.OK, "/service-providers.json");
   }
 
   @Test
   public void testModifiedAfter() throws Exception {
+    ZonedDateTime gmt = ZonedDateTime.now(ZoneId.of("GMT")).plusMinutes(60);
+    doTestModified(gmt, HttpStatus.NOT_MODIFIED, "/identity-providers.json");
+    doTestModified(gmt, HttpStatus.NOT_MODIFIED, "/service-providers.json");
+  }
+
+  private void doTestModified(ZonedDateTime modifiedSince, HttpStatus expectedStatusCode, String path) throws URISyntaxException {
     HttpHeaders headers = new PrePopulatedJsonHttpHeaders(new String[]{
-        HttpHeaders.IF_MODIFIED_SINCE, RFC_1123_DATE_TIME.format(ZonedDateTime.now(ZoneId.of("GMT")).plusMinutes(60))
+        HttpHeaders.IF_MODIFIED_SINCE, RFC_1123_DATE_TIME.format(modifiedSince)
     });
-    RequestEntity requestEntity = new RequestEntity(headers, HEAD, new URI("http://localhost:" + port + "/identity-providers.json"));
+    RequestEntity requestEntity = new RequestEntity(headers, HEAD, new URI("http://localhost:" + port + path));
     HttpStatus statusCode = restTemplate.exchange(requestEntity, String.class).getStatusCode();
-    assertEquals(HttpStatus.NOT_MODIFIED, statusCode);
+    assertEquals(expectedStatusCode, statusCode);
   }
 
   private List<Map<String, Object>> fetchMetatData(String path) throws URISyntaxException {
