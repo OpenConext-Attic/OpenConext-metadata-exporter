@@ -39,7 +39,7 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
   }
 
   @RequestMapping("/error")
-  public ResponseEntity<Map<String, Object>> error(HttpServletRequest aRequest) {
+  public ResponseEntity error(HttpServletRequest aRequest) {
     RequestAttributes requestAttributes = new ServletRequestAttributes(aRequest);
 
     Throwable error = this.errorAttributes.getError(requestAttributes);
@@ -49,7 +49,7 @@ public class ErrorController implements org.springframework.boot.autoconfigure.w
       //https://github.com/spring-projects/spring-boot/issues/3057
       statusCode = annotation != null ? annotation.value() : statusCode;
     }
-    return new ResponseEntity<>(statusCode);
+    return new ResponseEntity(statusCode);
   }
 
 }
