@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
-import static org.springframework.http.HttpMethod.HEAD;
 
 @RestController
 @RequestMapping(headers = {"Content-Type=application/json"}, produces = {"application/json"})
@@ -44,32 +42,34 @@ public class MetaDataController {
   private String serviceProvidersJson;
   private String identityProvidersJson;
 
-  private ZonedDateTime lastUpdate = ZonedDateTime.now(GMT);
+  private ZonedDateTime serviceProvidersLastUpdated = ZonedDateTime.now(GMT);
+  private ZonedDateTime identityProvidersLastUpdated = ZonedDateTime.now(GMT);
 
   @Autowired
   public MetaDataController(ServiceRegistryRepository serviceRegistryRepository, @Value("${metadata.refresh.minutes}") int period) {
     this.serviceRegistryRepository = serviceRegistryRepository;
-    newScheduledThreadPool(1).scheduleAtFixedRate(this::refreshMetadata, period, period, TimeUnit.MINUTES);
-    refreshMetadata();
+    newScheduledThreadPool(1).scheduleAtFixedRate(this::refreshMetadata, 1, period, TimeUnit.MINUTES);
   }
 
   @RequestMapping(method = RequestMethod.HEAD, value = "/identity-providers.json")
   public ResponseEntity identityProvidersHead(HttpServletRequest request) {
-    return isModified(request);
+    return isModified(request, identityProvidersLastUpdated);
   }
 
   @RequestMapping(method = RequestMethod.HEAD, value = "/service-providers.json")
   public ResponseEntity serviceProvidersHead(HttpServletRequest request) {
-    return isModified(request);
+    return isModified(request, serviceProvidersLastUpdated);
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/identity-providers.json")
   public String identityProviders() {
+    assureData(this.identityProvidersJson);
     return this.identityProvidersJson;
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/service-providers.json")
   public String serviceProviders() {
+    assureData(this.serviceProvidersJson);
     return this.serviceProvidersJson;
   }
 
@@ -78,24 +78,41 @@ public class MetaDataController {
     List<Map<String, Object>> identityProviders = serviceRegistryRepository.getEntities(EntityState.PROD, EntityType.IDP);
 
     try {
-      this.serviceProvidersJson = objectMapper.writeValueAsString(serviceProviders);
-      this.identityProvidersJson = objectMapper.writeValueAsString(identityProviders);
-      this.lastUpdate = ZonedDateTime.now(GMT);
+      String newServiceProviders = objectMapper.writeValueAsString(serviceProviders);
+      this.serviceProvidersJson = newServiceProviders;
+
+      String newIdentityProviders = objectMapper.writeValueAsString(identityProviders);
+      this.identityProvidersJson = newIdentityProviders;
+
+      boolean spEquals = newServiceProviders.equals(this.serviceProvidersJson);
+      this.serviceProvidersLastUpdated = spEquals ? this.serviceProvidersLastUpdated : ZonedDateTime.now(GMT);
+      LOG.info("Refreshed Metadata. ServiceProviders metadata has changed:" + spEquals);
+
+      boolean idpEquals = newIdentityProviders.equals(this.identityProvidersJson);
+      this.identityProvidersLastUpdated = idpEquals ? this.identityProvidersLastUpdated : ZonedDateTime.now(GMT);
+      LOG.info("Refreshed Metadata. IdenityProviders metadata has changed:" + idpEquals);
     } catch (JsonProcessingException e) {
       LOG.error("Exception in parsing JSON", e);
     }
   }
 
-  private ResponseEntity isModified(HttpServletRequest request) {
+  private ResponseEntity isModified(HttpServletRequest request, ZonedDateTime lastUpdated) {
     HttpStatus statusCode = HttpStatus.OK;
     String ifModifiedSince = request.getHeader(HttpHeaders.IF_MODIFIED_SINCE);
     if (StringUtils.hasText(ifModifiedSince)) {
       TemporalAccessor temporal = RFC_1123_DATE_TIME.parse(ifModifiedSince);
-      if (lastUpdate.isBefore(ZonedDateTime.from(temporal))) {
+      if (lastUpdated.isBefore(ZonedDateTime.from(temporal))) {
         statusCode = HttpStatus.NOT_MODIFIED;
       }
     }
     return new ResponseEntity(statusCode);
   }
+
+  private void assureData(String metaData) {
+    if (metaData == null) {
+      this.refreshMetadata();
+    }
+  }
+
 
 }

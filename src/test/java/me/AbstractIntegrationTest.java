@@ -31,7 +31,7 @@ import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.IS
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest(randomPort = true)
+@WebIntegrationTest(randomPort = true, value = "flyway.enabled=true")
 public abstract class AbstractIntegrationTest {
 
   protected ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();

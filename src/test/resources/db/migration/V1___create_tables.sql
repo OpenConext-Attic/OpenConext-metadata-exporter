@@ -39,7 +39,7 @@ CREATE TABLE `janus__metadata` (
   `value` text NOT NULL,
   `created` char(25) DEFAULT NULL ,
   `ip` char(39) DEFAULT NULL,
-    PRIMARY KEY (`connectionRevisionId`,`key`)
+  PRIMARY KEY (`connectionRevisionId`,`key`)
   -- CONSTRAINT `FK_3CEF9AA549045D9` FOREIGN KEY (`connectionRevisionId`) REFERENCES `janus__connectionRevision` (`id`) ON DELETE CASCADE
 )
   ENGINE = InnoDB DEFAULT CHARSET = latin1 COLLATE = latin1_general_cs;
