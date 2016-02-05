@@ -1,0 +1,11 @@
+language: java
+jdk:
+  - oraclejdk8
+services:
+  - mysql
+before_install:
+  - pip install --user codecov
+  - mysql -e "create database IF NOT EXISTS srlocal; grant all on srlocal.* to 'root';" -uroot
+after_success:
+  - codecov
+

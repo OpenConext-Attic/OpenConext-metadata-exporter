@@ -1,0 +1,18 @@
+[ {
+  "entityid" : "https://mock-idp",
+  "allowedall" : "no",
+  "coin:institution_id" : "mock",
+  "description:en" : "Mock IDP description",
+  "description:nl" : "Mock IDP description",
+  "name:en" : "Mock IDP",
+  "name:nl" : "Mock IDP",
+  "allowedEntities" : [ "https://mock-sp", "https://default-sp" ]
+}, {
+  "entityid" : "https://default-idp",
+  "allowedall" : "yes",
+  "description:en" : "Default IDP description",
+  "description:nl" : "Default IDP description",
+  "name:en" : "Default IDP",
+  "name:nl" : "Default IDP",
+  "allowedEntities" : [ ]
+} ]
