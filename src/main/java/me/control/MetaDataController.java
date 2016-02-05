@@ -79,18 +79,18 @@ public class MetaDataController {
 
     try {
       String newServiceProviders = objectMapper.writeValueAsString(serviceProviders);
+      boolean spEquals = newServiceProviders.equals(this.serviceProvidersJson);
       this.serviceProvidersJson = newServiceProviders;
 
       String newIdentityProviders = objectMapper.writeValueAsString(identityProviders);
+      boolean idpEquals = newIdentityProviders.equals(this.identityProvidersJson);
       this.identityProvidersJson = newIdentityProviders;
 
-      boolean spEquals = newServiceProviders.equals(this.serviceProvidersJson);
       this.serviceProvidersLastUpdated = spEquals ? this.serviceProvidersLastUpdated : ZonedDateTime.now(GMT);
-      LOG.info("Refreshed Metadata. ServiceProviders metadata has changed:" + !spEquals);
+      LOG.info("Refreshed Metadata. ServiceProviders metadata has changed: " + !spEquals);
 
-      boolean idpEquals = newIdentityProviders.equals(this.identityProvidersJson);
       this.identityProvidersLastUpdated = idpEquals ? this.identityProvidersLastUpdated : ZonedDateTime.now(GMT);
-      LOG.info("Refreshed Metadata. IdenityProviders metadata has changed:" + !idpEquals);
+      LOG.info("Refreshed Metadata. IdentityProviders metadata has changed: " + !idpEquals);
     } catch (JsonProcessingException e) {
       LOG.error("Exception in parsing JSON", e);
     }
