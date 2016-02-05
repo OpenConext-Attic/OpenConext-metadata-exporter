@@ -12,3 +12,14 @@ OpenConext Metadata Exporter
 - Java 8
 - Maven 3
 - MySQL 5.5
+
+### [Create database](#create-database)
+
+Connect to your local mysql database: `mysql -uroot`
+
+Execute the following:
+
+```sql
+CREATE DATABASE srlocal DEFAULT CHARACTER SET latin1;
+grant all on srlocal.* to 'root'@'localhost';
+```
