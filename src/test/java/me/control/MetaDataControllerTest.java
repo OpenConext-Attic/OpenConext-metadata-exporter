@@ -26,13 +26,13 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
 
   @Test
   public void testMetaDataIdps() throws Exception {
-    List<Map<String, Object>> idps = fetchMetatData("/identity-providers.json");
+    List<Map<String, Object>> idps = fetchMetaData("/identity-providers.json");
     assertJson("json/expected_identity_providers.json", idps);
   }
 
   @Test
   public void testMetaDataSps() throws Exception {
-    List<Map<String, Object>> sps = fetchMetatData("/service-providers.json");
+    List<Map<String, Object>> sps = fetchMetaData("/service-providers.json");
     assertJson("json/expected_service_providers.json", sps);
   }
 
@@ -59,7 +59,7 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
     assertEquals(expectedStatusCode, statusCode);
   }
 
-  private List<Map<String, Object>> fetchMetatData(String path) throws URISyntaxException {
+  private List<Map<String, Object>> fetchMetaData(String path) throws URISyntaxException {
     RequestEntity requestEntity = new RequestEntity(headers, GET, new URI("http://localhost:" + port + path));
     return restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
     }).getBody();

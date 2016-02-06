@@ -34,14 +34,14 @@ import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.IS
 @WebIntegrationTest(randomPort = true, value = "flyway.enabled=true")
 public abstract class AbstractIntegrationTest {
 
-  protected ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
+  protected static ObjectWriter objectWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 
   @Value("${local.server.port}")
   protected int port;
 
-  protected TestRestTemplate restTemplate = new TestRestTemplate("metadata.client", "secret");
+  protected static TestRestTemplate restTemplate = new TestRestTemplate("metadata.client", "secret");
 
-  protected HttpHeaders headers = new PrePopulatedJsonHttpHeaders();
+  protected static HttpHeaders headers = new PrePopulatedJsonHttpHeaders();
 
 
 }
