@@ -1,7 +1,7 @@
 # OpenConext-metadata-exporter
 
-[![Build Status](https://travis-ci.org/oharsta/OpenConext-metadata-exporter.svg)](https://travis-ci.org/oharsta/OpenConext-metadata-exporter)
-[![codecov.io](https://codecov.io/github/oharsta/OpenConext-metadata-exporter/coverage.svg)](https://codecov.io/github/oharsta/OpenConext-metadata-exporter)
+[![Build Status](https://travis-ci.org/OpenConext/OpenConext-metadata-exporter.svg)](https://travis-ci.org/OpenConext/OpenConext-metadata-exporter)
+[![codecov.io](https://codecov.io/github/OpenConext/OpenConext-metadata-exporter/coverage.svg)](https://codecov.io/github/OpenConext/OpenConext-metadata-exporter)
 
 OpenConext Metadata Exporter
 

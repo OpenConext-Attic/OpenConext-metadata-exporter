@@ -19,7 +19,7 @@
     </parent>
 
     <scm>
-        <connection>scm:git:git@github.com:oharsta/OpenConext-metadata-exporter.git</connection>
+        <connection>scm:git:git@github.com:OpenConext/OpenConext-metadata-exporter.git</connection>
     </scm>
 
     <properties>
