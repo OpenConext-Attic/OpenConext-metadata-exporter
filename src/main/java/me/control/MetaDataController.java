@@ -92,6 +92,7 @@ public class MetaDataController {
 
       this.identityProvidersLastUpdated = idpEquals ? this.identityProvidersLastUpdated : ZonedDateTime.now(GMT);
       LOG.info("IdentityProviders metadata has changed: " + !idpEquals);
+
       LOG.info("Finished refreshing metadata in " + (System.currentTimeMillis() - start) + " ms");
     } catch (JsonProcessingException e) {
       LOG.error("Exception in parsing JSON", e);
@@ -115,6 +116,5 @@ public class MetaDataController {
       this.refreshMetadata();
     }
   }
-
 
 }

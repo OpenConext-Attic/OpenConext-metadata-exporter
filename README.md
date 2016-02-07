@@ -34,7 +34,7 @@ This project uses Spring Boot and Maven. To run locally, type:
 mvn spring-boot:run
 ```
 
-When developing, it's convenient to just execute the applications main-method, which is in [Application](src/main/java/aa/Application.java).
+When developing, it's convenient to just execute the applications main-method, which is in [Application](src/main/java/me/Application.java).
 
 ## [Miscellaneous](#miscellaneous)
 
