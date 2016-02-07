@@ -5,15 +5,21 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +40,29 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
   public void testMetaDataSps() throws Exception {
     List<Map<String, Object>> sps = fetchMetaData("/service-providers.json");
     assertJson("json/expected_service_providers.json", sps);
+  }
+
+  @Test
+  public void testMetaDataSpsWithUrlResource() throws Exception {
+    String json = IOUtils.toString(new UrlResource("http://localhost:" + port + "/service-providers.json") {
+      @Override
+      public InputStream getInputStream() throws IOException {
+        URLConnection con = this.getURL().openConnection();
+        String basicAuth = "Basic " + new String(Base64.getEncoder().encode("metadata.client:secret".getBytes()));
+        con.setRequestProperty("Authorization", basicAuth);
+        con.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
+        try {
+          return con.getInputStream();
+        } catch (IOException ex) {
+          if (con instanceof HttpURLConnection) {
+            ((HttpURLConnection) con).disconnect();
+          }
+          throw ex;
+        }
+      }
+    }.getInputStream());
+    String expected = IOUtils.toString(new ClassPathResource("json/expected_service_providers_raw.json").getInputStream());
+    assertEquals(expected, json);
   }
 
   @Test
