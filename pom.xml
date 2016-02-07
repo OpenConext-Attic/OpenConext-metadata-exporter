@@ -27,7 +27,7 @@
         <java.version>1.8</java.version>
         <flyway.version>3.2.1</flyway.version>
         <httpclient.version>4.5.1</httpclient.version>
-        <mysql-jdbc-driver.version>5.1.34</mysql-jdbc-driver.version>
+        <mysql-jdbc-driver.version>5.1.38</mysql-jdbc-driver.version>
     </properties>
 
 

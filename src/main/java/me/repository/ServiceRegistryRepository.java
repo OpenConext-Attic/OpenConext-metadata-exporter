@@ -22,8 +22,6 @@ public class ServiceRegistryRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
-  private final Pattern isNumber = Pattern.compile("^[0-9]+$");
-
   @Autowired
   public ServiceRegistryRepository(DataSource dataSource) {
     this.jdbcTemplate = new JdbcTemplate(dataSource);

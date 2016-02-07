@@ -19,7 +19,7 @@
         </encoder>
     </appender>
 
-    <logger name="aa" level="DEBUG"/>
+    <logger name="me" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

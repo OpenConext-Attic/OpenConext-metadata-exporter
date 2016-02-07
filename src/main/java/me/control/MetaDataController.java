@@ -33,7 +33,7 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 public class MetaDataController {
 
   private final static Logger LOG = LoggerFactory.getLogger(MetaDataController.class);
-  public static final ZoneId GMT = ZoneId.of("GMT");
+  public final static ZoneId GMT = ZoneId.of("GMT");
 
   private ServiceRegistryRepository serviceRegistryRepository;
 
@@ -74,6 +74,7 @@ public class MetaDataController {
   }
 
   private void refreshMetadata() {
+    long start = System.currentTimeMillis();
     List<Map<String, Object>> serviceProviders = serviceRegistryRepository.getEntities(EntityState.PROD, EntityType.SP);
     List<Map<String, Object>> identityProviders = serviceRegistryRepository.getEntities(EntityState.PROD, EntityType.IDP);
 
@@ -87,10 +88,11 @@ public class MetaDataController {
       this.identityProvidersJson = newIdentityProviders;
 
       this.serviceProvidersLastUpdated = spEquals ? this.serviceProvidersLastUpdated : ZonedDateTime.now(GMT);
-      LOG.info("Refreshed Metadata. ServiceProviders metadata has changed: " + !spEquals);
+      LOG.info("ServiceProviders metadata has changed: " + !spEquals);
 
       this.identityProvidersLastUpdated = idpEquals ? this.identityProvidersLastUpdated : ZonedDateTime.now(GMT);
-      LOG.info("Refreshed Metadata. IdentityProviders metadata has changed: " + !idpEquals);
+      LOG.info("IdentityProviders metadata has changed: " + !idpEquals);
+      LOG.info("Finished refreshing metadata in " + (System.currentTimeMillis() - start) + " ms");
     } catch (JsonProcessingException e) {
       LOG.error("Exception in parsing JSON", e);
     }
