@@ -5,7 +5,7 @@
 
     <groupId>org.openconext</groupId>
     <artifactId>metadata-exporter</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>metadata-exporter</name>
