@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
@@ -26,6 +27,13 @@ public class BasicAuthenticationFilterTest extends AbstractIntegrationTest {
   @Test
   public void testAuthenticationWithoutHeaders() throws Exception {
     doTest(new TestRestTemplate(), headers);
+  }
+
+  @Test
+  public void testUnprotectedHealth() throws Exception {
+    ResponseEntity<Map> response = restTemplate.exchange(new RequestEntity(headers, GET, new URI("http://localhost:" + port + "/health")), Map.class);
+    assertEquals(200, response.getStatusCode().value());
+    assertEquals("UP", response.getBody().get("status"));
   }
 
   @Test

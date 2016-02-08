@@ -11,10 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.regex.Pattern;
 
 import static java.util.Base64.getDecoder;
 
 public class BasicAuthenticationFilter extends OncePerRequestFilter {
+
+  private final Pattern pattern = Pattern.compile("/health");
 
   private final String userName;
   private final String password;
@@ -26,6 +29,12 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    String url = getRequestPath(request);
+    if (pattern.matcher(url).matches()) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
     String header = request.getHeader("Authorization");
 
     if (header == null || !header.startsWith("Basic ")) {
@@ -53,5 +62,14 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     }
     return new String[]{token.substring(0, delim), token.substring(delim + 1)};
   }
+
+  private String getRequestPath(HttpServletRequest request) {
+    String url = request.getServletPath();
+    if (request.getPathInfo() != null) {
+      url += request.getPathInfo();
+    }
+    return url;
+  }
+
 
 }
