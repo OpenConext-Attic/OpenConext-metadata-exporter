@@ -52,3 +52,10 @@ curl -i -I -H "Content-Type: application/json" --user metadata.client:secret htt
 curl -i -I -H "Content-Type: application/json" -H "If-Modified-Since: Sat, 25 Feb 2017 09:14:11 GMT" --user metadata.client:secret http://localhost:8080/identity-providers.json
 curl -i -I -H "Content-Type: application/json" -H "If-Modified-Since: Sat, 25 Feb 2017 09:14:11 GMT" --user metadata.client:secret http://localhost:8080/service-providers.json
 ```
+
+For test:
+
+```bash
+curl -i -H "Content-Type: application/json" --user metadata.client:secret https://multidata.test.surfconext.nl/service-providers.json
+curl -i -H "Content-Type: application/json" --user metadata.client:secret https://multidata.test.surfconext.nl/identity-providers.json
+```

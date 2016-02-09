@@ -5,4 +5,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
 public class AccessNotAllowedException extends RuntimeException {
+
+  public AccessNotAllowedException(String message) {
+    super(message);
+  }
 }

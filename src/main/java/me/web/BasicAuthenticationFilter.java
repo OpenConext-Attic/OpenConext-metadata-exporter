@@ -38,7 +38,7 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     String header = request.getHeader("Authorization");
 
     if (header == null || !header.startsWith("Basic ")) {
-      throw new AccessNotAllowedException();
+      throw new AccessNotAllowedException("Authorization header not set for protected endpoint '" + url + "'");
     }
 
     String[] tokens = extractAndDecodeHeader(header, request);
@@ -48,7 +48,7 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     logger.info("Basic Authentication Authorization header found for user '" + userName + "'");
 
     if (!this.userName.equals(userName) || !this.password.equals(password)) {
-      throw new AccessNotAllowedException();
+      throw new AccessNotAllowedException("Wrong username / credentials for '" + userName + "'");
     }
     filterChain.doFilter(request, response);
   }
@@ -58,7 +58,7 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     String token = new String(getDecoder().decode(header.substring(6)));
     int delim = token.indexOf(":");
     if (delim == -1) {
-      throw new AccessNotAllowedException();
+      throw new AccessNotAllowedException("Authorization contains wrong format '" + token + "'");
     }
     return new String[]{token.substring(0, delim), token.substring(delim + 1)};
   }
