@@ -45,7 +45,7 @@ public class BasicAuthenticationFilter extends OncePerRequestFilter {
     String userName = tokens[0];
     String password = tokens[1];
 
-    logger.debug("Basic Authentication Authorization header found for user '" + userName + "'");
+    logger.info("Basic Authentication Authorization header found for user '" + userName + "'");
 
     if (!this.userName.equals(userName) || !this.password.equals(password)) {
       throw new AccessNotAllowedException();
