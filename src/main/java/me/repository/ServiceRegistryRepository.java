@@ -1,7 +1,6 @@
 package me.repository;
 
-import de.ailis.pherialize.Mixed;
-import de.ailis.pherialize.Pherialize;
+import me.model.ArpUnserializer;
 import me.model.EntityState;
 import me.model.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +9,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import static java.util.stream.Collectors.toList;
+import java.util.*;
 
 @Repository
 public class ServiceRegistryRepository {
 
   private final JdbcTemplate jdbcTemplate;
+
+  private final ArpUnserializer arpUnserializer = new ArpUnserializer();
+
 
   @Autowired
   public ServiceRegistryRepository(DataSource dataSource) {
@@ -54,12 +51,9 @@ public class ServiceRegistryRepository {
   }
 
   private void addArp(Map<String, Object> entity, String arp) {
-    if (StringUtils.hasText(arp)) {
-      Mixed unserialize = Pherialize.unserialize(arp);
-      if (unserialize != null) {
-        entity.put("attributes",
-            unserialize.toArray().keySet().stream().map(obj -> ((Mixed) obj).getValue()).collect(toList()));
-      }
+    Optional<Collection<String>> attributes = arpUnserializer.unserialize(arp);
+    if (attributes.isPresent()) {
+      entity.put("attributes",attributes.get());
     }
   }
 
