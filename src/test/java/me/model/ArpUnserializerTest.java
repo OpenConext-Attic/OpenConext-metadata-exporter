@@ -22,7 +22,12 @@ public class ArpUnserializerTest {
 
   @Test
   public void testUnserialize() throws Exception {
-    String arp = "a:6:{s:49:\"urn:mace:dir:attribute-def:eduPersonPrincipalName\";a:1:{i:0;s:1:\"*\";}s:38:\"urn:mace:dir:attribute-def:displayName\";a:1:{i:0;s:1:\"*\";}s:29:\"urn:mace:dir:attribute-def:cn\";a:1:{i:0;s:1:\"*\";}s:31:\"urn:mace:dir:attribute-def:mail\";a:1:{i:0;s:1:\"*\";}s:55:\"urn:mace:terena.org:attribute-def:schacHomeOrganization\";a:1:{i:0;s:1:\"*\";}s:47:\"urn:mace:dir:attribute-def:eduPersonAffiliation\";a:1:{i:0;s:1:\"*\";}}";
+    String arp = "a:6:{s:49:\"urn:mace:dir:attribute-def:eduPersonPrincipalName\";a:1:{i:0;s:1:\"*\";}s:38:\"" +
+        "urn:mace:dir:attribute-def:displayName\";a:1:{i:0;s:1:\"*\";}s:29:" +
+        "\"urn:mace:dir:attribute-def:cn\";a:1:{i:0;s:1:\"*\";}s:31:" +
+        "\"urn:mace:dir:attribute-def:mail\";a:1:{i:0;s:1:\"*\";}s:55:" +
+        "\"urn:mace:terena.org:attribute-def:schacHomeOrganization\";a:1:{i:0;s:1:\"*\";}s:47:" +
+        "\"urn:mace:dir:attribute-def:eduPersonAffiliation\";a:1:{i:0;s:1:\"*\";}}";
     Collection<String> attributes = subject.unserialize(arp).get();
     assertEquals(asList(
         "urn:mace:dir:attribute-def:eduPersonPrincipalName",
