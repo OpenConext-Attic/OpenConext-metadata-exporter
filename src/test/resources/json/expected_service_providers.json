@@ -26,6 +26,7 @@
   "entityid" : "https://default-sp",
   "allowedall" : "yes",
   "attributes" : [ ],
+  "coin:ss:idp_visible_only" : "1",
   "description:en" : "Default SP description",
   "description:nl" : "Default SP description",
   "name:en" : "Default SP",

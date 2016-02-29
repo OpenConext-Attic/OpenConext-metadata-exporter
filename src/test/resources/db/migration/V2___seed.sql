@@ -49,6 +49,7 @@ VALUES
   (6, 'name:nl', 'Default SP'),
   (6, 'description:en', 'Default SP description'),
   (6, 'description:nl', 'Default SP description'),
+  (6, 'coin:ss:idp_visible_only', '1'),
   (9, 'name:en', 'Mock IDP'),
   (9, 'name:nl', 'Mock IDP'),
   (9, 'description:en', 'Mock IDP description'),

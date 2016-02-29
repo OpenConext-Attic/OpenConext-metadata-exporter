@@ -9,11 +9,9 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
-import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
@@ -27,6 +25,7 @@ import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.HEAD;
+import static org.springframework.http.HttpStatus.OK;
 
 public class MetaDataControllerTest extends AbstractIntegrationTest {
 
@@ -43,6 +42,15 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
+  public void testIdpOnly() throws Exception {
+    List<Map<String, Object>> sps = fetchMetaData("/service-providers.json");
+    Map<String, Object> defaultSp = sps.stream().filter(map -> map.get("entityid").equals("https://default-sp")).findFirst().get();
+    Object idpVisibleOnly = defaultSp.get("coin:ss:idp_visible_only");
+    assertEquals(idpVisibleOnly, "1");
+
+  }
+
+  @Test
   public void testMetaDataSpsWithUrlResource() throws Exception {
     String json = IOUtils.toString(new UrlResource("http://localhost:" + port + "/service-providers.json") {
       @Override
@@ -51,14 +59,7 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
         String basicAuth = "Basic " + new String(Base64.getEncoder().encode("metadata.client:secret".getBytes()));
         con.setRequestProperty("Authorization", basicAuth);
         con.setRequestProperty(HttpHeaders.CONTENT_TYPE, "application/json");
-        try {
-          return con.getInputStream();
-        } catch (IOException ex) {
-          if (con instanceof HttpURLConnection) {
-            ((HttpURLConnection) con).disconnect();
-          }
-          throw ex;
-        }
+        return con.getInputStream();
       }
     }.getInputStream());
     String expected = IOUtils.toString(new ClassPathResource("json/expected_service_providers_raw.json").getInputStream());
@@ -68,8 +69,13 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
   @Test
   public void testNotModified() throws Exception {
     ZonedDateTime gmt = ZonedDateTime.now(ZoneId.of("GMT")).minusMinutes(60);
-    doTestModified(gmt, HttpStatus.OK, "/identity-providers.json");
-    doTestModified(gmt, HttpStatus.OK, "/service-providers.json");
+    doTestModified(gmt, OK, "/identity-providers.json");
+    doTestModified(gmt, OK, "/service-providers.json");
+  }
+
+  @Test
+  public void testName() throws Exception {
+
   }
 
   @Test
