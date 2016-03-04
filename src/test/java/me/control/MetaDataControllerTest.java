@@ -32,12 +32,16 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
   @Test
   public void testMetaDataIdps() throws Exception {
     List<Map<String, Object>> idps = fetchMetaData("/identity-providers.json");
+    assertEquals(2, idps.size());
+
     assertJson("json/expected_identity_providers.json", idps);
   }
 
   @Test
   public void testMetaDataSps() throws Exception {
     List<Map<String, Object>> sps = fetchMetaData("/service-providers.json");
+    assertEquals(2, sps.size());
+
     assertJson("json/expected_service_providers.json", sps);
   }
 
@@ -74,8 +78,15 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void testName() throws Exception {
+  public void testIncludeNonProdSps() throws Exception {
+    List<Map<String, Object>> idps = fetchMetaData("/identity-providers.json?includeTest=true");
+    assertEquals(3, idps.size());
+  }
 
+  @Test
+  public void testIncludeNonProdIdps() throws Exception {
+    List<Map<String, Object>> sps = fetchMetaData("/service-providers.json?includeTest=true");
+    assertEquals(3, sps.size());
   }
 
   @Test

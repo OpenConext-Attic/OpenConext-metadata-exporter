@@ -1,5 +1,6 @@
 [ {
   "entityid" : "https://mock-idp",
+  "state" : "prodaccepted",
   "allowedall" : "no",
   "coin:institution_id" : "mock",
   "description:en" : "Mock IDP description",
@@ -9,6 +10,7 @@
   "allowedEntities" : [ "https://mock-sp", "https://default-sp" ]
 }, {
   "entityid" : "https://default-idp",
+  "state" : "prodaccepted",
   "allowedall" : "yes",
   "description:en" : "Default IDP description",
   "description:nl" : "Default IDP description",

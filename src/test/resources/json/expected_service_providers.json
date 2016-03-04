@@ -1,5 +1,6 @@
 [ {
   "entityid" : "https://mock-sp",
+  "state" : "prodaccepted",
   "allowedall" : "yes",
   "attributes" : [ "urn:mace:dir:attribute-def:displayName", "urn:mace:dir:attribute-def:mail", "urn:mace:dir:attribute-def:isMemberOf", "urn:mace:dir:attribute-def:uid" ],
   "coin:attribute_aggregation_required" : "0",
@@ -24,6 +25,7 @@
   "allowedEntities" : [ ]
 }, {
   "entityid" : "https://default-sp",
+  "state" : "prodaccepted",
   "allowedall" : "yes",
   "attributes" : [ ],
   "coin:ss:idp_visible_only" : "1",

@@ -1,7 +1,5 @@
 package me.control;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import me.model.EntityState;
 import me.model.EntityType;
 import me.repository.ServiceRegistryRepository;
@@ -15,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,20 +26,19 @@ import java.util.concurrent.TimeUnit;
 
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(headers = {"Content-Type=application/json"}, produces = {"application/json"})
 public class MetaDataController {
 
   private final static Logger LOG = LoggerFactory.getLogger(MetaDataController.class);
-  public final static ZoneId GMT = ZoneId.of("GMT");
+  private final static ZoneId GMT = ZoneId.of("GMT");
 
   private ServiceRegistryRepository serviceRegistryRepository;
 
-  private ObjectMapper objectMapper = new ObjectMapper();
-
-  private String serviceProvidersJson;
-  private String identityProvidersJson;
+  private List<Map<String, Object>> serviceProviders;
+  private List<Map<String, Object>> identityProviders;
 
   private ZonedDateTime serviceProvidersLastUpdated = ZonedDateTime.now(GMT);
   private ZonedDateTime identityProvidersLastUpdated = ZonedDateTime.now(GMT);
@@ -62,30 +60,40 @@ public class MetaDataController {
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/identity-providers.json")
-  public String identityProviders() {
-    assureData(this.identityProvidersJson);
-    return this.identityProvidersJson;
+  public List<Map<String, Object>> identityProviders(@RequestParam(value = "includeTest", defaultValue = "false", required = false) boolean includeTest) {
+    assureData(this.identityProviders);
+    if (!includeTest) {
+      return filterNonProdProviders(this.identityProviders);
+    }
+    return this.identityProviders;
+  }
+
+  private List<Map<String, Object>> filterNonProdProviders(List<Map<String, Object>> providers) {
+    return providers.stream().filter(map -> map.get("state").equals(EntityState.PROD.getState())).collect(toList());
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/service-providers.json")
-  public String serviceProviders() {
-    assureData(this.serviceProvidersJson);
-    return this.serviceProvidersJson;
+  public List<Map<String, Object>> serviceProviders(@RequestParam(value = "includeTest", defaultValue = "false", required = false) boolean includeTest) {
+    assureData(this.serviceProviders);
+    if (!includeTest) {
+      return filterNonProdProviders(this.serviceProviders);
+    }
+    return this.serviceProviders;
   }
 
   private void refreshMetadata() {
-    long start = System.currentTimeMillis();
-    List<Map<String, Object>> serviceProviders = serviceRegistryRepository.getEntities(EntityState.PROD, EntityType.SP);
-    List<Map<String, Object>> identityProviders = serviceRegistryRepository.getEntities(EntityState.PROD, EntityType.IDP);
-
     try {
-      String newServiceProviders = objectMapper.writeValueAsString(serviceProviders);
-      boolean spEquals = newServiceProviders.equals(this.serviceProvidersJson);
-      this.serviceProvidersJson = newServiceProviders;
+      long start = System.currentTimeMillis();
+      LOG.info("Start refreshing metadata");
 
-      String newIdentityProviders = objectMapper.writeValueAsString(identityProviders);
-      boolean idpEquals = newIdentityProviders.equals(this.identityProvidersJson);
-      this.identityProvidersJson = newIdentityProviders;
+      List<Map<String, Object>> newServiceProviders = serviceRegistryRepository.getEntities(EntityType.SP);
+      List<Map<String, Object>> newIdentityProviders = serviceRegistryRepository.getEntities(EntityType.IDP);
+
+      boolean spEquals = newServiceProviders.equals(this.serviceProviders);
+      this.serviceProviders = newServiceProviders;
+
+      boolean idpEquals = newIdentityProviders.equals(this.identityProviders);
+      this.identityProviders = newIdentityProviders;
 
       this.serviceProvidersLastUpdated = spEquals ? this.serviceProvidersLastUpdated : ZonedDateTime.now(GMT);
       LOG.info("ServiceProviders metadata has changed: " + !spEquals);
@@ -94,8 +102,9 @@ public class MetaDataController {
       LOG.info("IdentityProviders metadata has changed: " + !idpEquals);
 
       LOG.info("Finished refreshing metadata in " + (System.currentTimeMillis() - start) + " ms");
-    } catch (JsonProcessingException e) {
-      LOG.error("Exception in parsing JSON", e);
+    } catch (RuntimeException e) {
+      //we don't want to stop the re-scheduling process and it will be send by email through rollbar
+      LOG.error("Exception in refreshMetadata", e);
     }
   }
 
@@ -111,7 +120,7 @@ public class MetaDataController {
     return new ResponseEntity(statusCode);
   }
 
-  private void assureData(String metaData) {
+  private void assureData(Object metaData) {
     if (metaData == null) {
       this.refreshMetadata();
     }

@@ -3,7 +3,9 @@ VALUES
   (1, 2, 'https://mock-sp', 'saml20-sp'),
   (2, 2, 'https://default-sp', 'saml20-sp'),
   (3, 2, 'http://mock-idp', 'saml20-idp'),
-  (4, 2, 'https://default-idp', 'saml20-idp');
+  (4, 2, 'https://default-idp', 'saml20-idp'),
+  (5, 1, 'https://test-idp', 'saml20-idp'),
+  (6, 0, 'https://test-sp', 'saml20-sp');
 
 INSERT INTO `janus__connectionRevision` (`id`, `eid`, `entityid`, `revisionid`, `state`, `type`, `allowedall`, `active`, `arp_attributes`)
 VALUES
@@ -18,7 +20,10 @@ VALUES
   (9, 3, 'https://mock-idp', 2, 'prodaccepted', 'saml20-idp', 'no', 'yes', null),
   (10, 4, 'https://default-idp', 0, 'prodaccepted', 'saml20-idp', 'yes', 'yes', 'N;'),
   (11, 4, 'https://default-idp', 1, 'prodaccepted', 'saml20-idp', 'yes', 'yes', 'N;'),
-  (12, 4, 'https://default-idp', 2, 'prodaccepted', 'saml20-idp', 'yes', 'yes', 'N;');
+  (12, 4, 'https://default-idp', 2, 'prodaccepted', 'saml20-idp', 'yes', 'yes', 'N;'),
+  (13, 5, 'https://test-idp', 0, 'testaccepted', 'saml20-idp', 'yes', 'yes', 'N;'),
+  (14, 5, 'https://test-idp', 1, 'testaccepted', 'saml20-idp', 'yes', 'yes', 'N;'),
+  (15, 6, 'https://test-sp', 0, 'testaccepted', 'saml20-sp', 'yes', 'yes', 'N;');
 
 INSERT INTO `janus__metadata` (`connectionRevisionId`, `key`, `value`)
 VALUES
@@ -58,7 +63,11 @@ VALUES
   (12, 'name:en', 'Default IDP'),
   (12, 'name:nl', 'Default IDP'),
   (12, 'description:en', 'Default IDP description'),
-  (12, 'description:nl', 'Default IDP description');
+  (12, 'description:nl', 'Default IDP description'),
+  (14, 'name:en', 'Test IDP'),
+  (14, 'name:nl', 'Test IDP'),
+  (15, 'name:en', 'Test SP'),
+  (15, 'name:nl', 'Test SP');
 
 INSERT INTO `janus__allowedConnection` (`connectionRevisionId`, `remoteeid`)
 VALUES

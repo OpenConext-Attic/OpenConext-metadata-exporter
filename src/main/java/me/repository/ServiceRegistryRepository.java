@@ -24,23 +24,24 @@ public class ServiceRegistryRepository {
     this.jdbcTemplate = new JdbcTemplate(dataSource);
   }
 
-  public List<Map<String, Object>> getEntities(EntityState state, EntityType type) {
+  public List<Map<String, Object>> getEntities(EntityType type) {
     return jdbcTemplate.query("SELECT CONNECTION.id, CONNECTION.revisionNr FROM janus__connection AS CONNECTION " +
             "INNER JOIN janus__connectionRevision AS CONNECTION_REVISION ON CONNECTION_REVISION.eid = CONNECTION.id " +
             "AND CONNECTION_REVISION.revisionid = CONNECTION.revisionNr WHERE CONNECTION_REVISION.active = 'yes' AND " +
-            "CONNECTION_REVISION.state=? AND CONNECTION.type=?",
-        new String[]{state.getState(), type.getType()},
+            "CONNECTION.type=?",
+        new String[]{type.getType()},
         (rs, rowNum) -> getEntity(rs.getLong("id"), rs.getLong("revisionNr"))
     );
   }
 
   private Map<String, Object> getEntity(Long eid, Long revisionid) {
-    return jdbcTemplate.queryForObject("SELECT entityid, allowedall, arp_attributes FROM janus__connectionRevision " +
+    return jdbcTemplate.queryForObject("SELECT entityid, state, allowedall, arp_attributes FROM janus__connectionRevision " +
             "WHERE  eid = ? AND revisionid = ?",
         new Long[]{eid, revisionid},
         (rs, rowNum) -> {
           Map<String, Object> entity = new LinkedHashMap<>();
           entity.put("entityid", rs.getString("entityid"));
+          entity.put("state", rs.getString("state"));
           entity.put("allowedall", rs.getString("allowedall"));
           addArp(entity, rs.getString("arp_attributes"));
           addMetaData(entity, eid, revisionid);
