@@ -69,7 +69,7 @@ public class MetaDataController {
   }
 
   private List<Map<String, Object>> filterNonProdProviders(List<Map<String, Object>> providers) {
-    return providers.stream().filter(map -> map.get("state").equals(EntityState.PROD.getState())).collect(toList());
+    return providers.stream().filter(map -> map.getOrDefault("state", "not-include").equals(EntityState.PROD.getState())).collect(toList());
   }
 
   @RequestMapping(method = RequestMethod.GET, value = "/service-providers.json")
@@ -120,6 +120,7 @@ public class MetaDataController {
     return new ResponseEntity(statusCode);
   }
 
+  //we need to assure we don't get called to deliver metadata when the timer has not been hit
   private void assureData(Object metaData) {
     if (metaData == null) {
       this.refreshMetadata();
