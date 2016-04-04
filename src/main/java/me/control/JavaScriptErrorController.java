@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.stream.Collector;
 
 @RestController
@@ -36,7 +35,7 @@ public class JavaScriptErrorController {
   }
 
   @RequestMapping(value = "/jsError", method = RequestMethod.POST)
-  public ResponseEntity<Void> reportError(@RequestBody Map<String, Object> payload) throws JsonProcessingException {
+  public ResponseEntity<Void> reportError(@RequestBody Map<String, Object> payload) throws JsonProcessingException, UnknownHostException {
     String clientId = (String) payload.getOrDefault("clientId", "");
     String accessToken = (String) payload.getOrDefault("accessToken", "");
     Optional<Map<String, String>> client = this.clients.stream()
@@ -44,6 +43,8 @@ public class JavaScriptErrorController {
             !clientId.isEmpty() && map.get("clientId").equals(clientId) && !accessToken.isEmpty() && map.get("accessToken").equals(accessToken))
         .collect(singletonOptionalCollector());
     if (client.isPresent()) {
+      payload.put("dateTime", new Date());
+      payload.put("machine", InetAddress.getLocalHost().getHostName());
       LOG.error(objectMapper.writeValueAsString(payload));
       return ResponseEntity.ok().build();
     }

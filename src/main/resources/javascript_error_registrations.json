@@ -1,6 +1,1 @@
-[
-  {
-    "clientId": "attribute-aggregator",
-    "accessToken": "secret"
-  }
-]
+[ { "clientId": "attribute-aggregator","accessToken": "secret"}]
