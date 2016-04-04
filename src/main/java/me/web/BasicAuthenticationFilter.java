@@ -17,7 +17,7 @@ import static java.util.Base64.getDecoder;
 
 public class BasicAuthenticationFilter extends OncePerRequestFilter {
 
-  private final Pattern pattern = Pattern.compile("/health");
+  private final Pattern pattern = Pattern.compile("/health|/jsError");
 
   private final String userName;
   private final String password;

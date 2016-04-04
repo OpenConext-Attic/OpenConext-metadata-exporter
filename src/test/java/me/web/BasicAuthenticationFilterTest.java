@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 public class BasicAuthenticationFilterTest extends AbstractIntegrationTest {
 
@@ -31,7 +32,7 @@ public class BasicAuthenticationFilterTest extends AbstractIntegrationTest {
 
   @Test
   public void testUnprotectedHealth() throws Exception {
-    ResponseEntity<Map> response = restTemplate.exchange(new RequestEntity(headers, GET, new URI("http://localhost:" + port + "/health")), Map.class);
+    ResponseEntity<Map> response = new TestRestTemplate().exchange(new RequestEntity(headers, GET, new URI("http://localhost:" + port + "/health")), Map.class);
     assertEquals(200, response.getStatusCode().value());
     assertEquals("UP", response.getBody().get("status"));
   }
