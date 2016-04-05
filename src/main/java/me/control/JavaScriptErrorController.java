@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collector;
 
@@ -43,9 +44,11 @@ public class JavaScriptErrorController {
             !clientId.isEmpty() && map.get("clientId").equals(clientId) && !accessToken.isEmpty() && map.get("accessToken").equals(accessToken))
         .collect(singletonOptionalCollector());
     if (client.isPresent()) {
-      payload.put("dateTime", new Date());
+      payload.put("dateTime", new SimpleDateFormat("yyyyy-mm-dd hh:mm:ss").format(new Date()));
       payload.put("machine", InetAddress.getLocalHost().getHostName());
-      LOG.error(objectMapper.writeValueAsString(payload));
+      payload.remove("accessToken");
+      String msg = objectMapper.writeValueAsString(payload);
+      LOG.error(msg, new RuntimeException(msg));
       return ResponseEntity.ok().build();
     }
     return ResponseEntity.notFound().build();
