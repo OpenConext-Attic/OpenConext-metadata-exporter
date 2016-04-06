@@ -107,8 +107,7 @@ public class MetaDataControllerTest extends AbstractIntegrationTest {
 
   private List<Map<String, Object>> fetchMetaData(String path) throws URISyntaxException {
     RequestEntity requestEntity = new RequestEntity(headers, GET, new URI("http://localhost:" + port + path));
-    return restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Map<String, Object>>>() {
-    }).getBody();
+    return restTemplate.exchange(requestEntity, new ParameterizedTypeReference<List<Map<String, Object>>>() {}).getBody();
   }
 
   private void assertJson(String expectedJsonPath, Object object) throws IOException {
