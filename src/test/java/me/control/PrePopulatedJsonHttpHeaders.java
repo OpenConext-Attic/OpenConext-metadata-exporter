@@ -1,11 +1,10 @@
 package me.control;
 
-import org.springframework.http.HttpHeaders;
-
-import java.util.Arrays;
-
 import static java.util.Arrays.asList;
 
+import org.springframework.http.HttpHeaders;
+
+@SuppressWarnings("serial")
 public class PrePopulatedJsonHttpHeaders extends HttpHeaders {
 
   public PrePopulatedJsonHttpHeaders(String[]... headers) {

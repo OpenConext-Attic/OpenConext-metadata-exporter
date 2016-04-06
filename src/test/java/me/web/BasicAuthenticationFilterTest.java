@@ -1,7 +1,13 @@
 package me.web;
 
-import me.AbstractIntegrationTest;
-import me.control.PrePopulatedJsonHttpHeaders;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.http.HttpMethod.GET;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Base64;
+import java.util.Map;
+
 import org.junit.Test;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.http.HttpHeaders;
@@ -9,14 +15,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Base64;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import me.AbstractIntegrationTest;
+import me.control.PrePopulatedJsonHttpHeaders;
 
 public class BasicAuthenticationFilterTest extends AbstractIntegrationTest {
 
@@ -32,7 +32,7 @@ public class BasicAuthenticationFilterTest extends AbstractIntegrationTest {
 
   @Test
   public void testUnprotectedHealth() throws Exception {
-    ResponseEntity<Map> response = new TestRestTemplate().exchange(new RequestEntity(headers, GET, new URI("http://localhost:" + port + "/health")), Map.class);
+    ResponseEntity<Map> response = new TestRestTemplate().exchange(new RequestEntity<Void>(headers, GET, new URI("http://localhost:" + port + "/health")), Map.class);
     assertEquals(200, response.getStatusCode().value());
     assertEquals("UP", response.getBody().get("status"));
   }
@@ -44,7 +44,7 @@ public class BasicAuthenticationFilterTest extends AbstractIntegrationTest {
   }
 
   private void doTest(RestTemplate restTemplate, HttpHeaders headers) throws URISyntaxException {
-    ResponseEntity<String> response = restTemplate.exchange(new RequestEntity(headers, GET, new URI("http://localhost:" + port + "/identity-providers.json")), String.class);
+    ResponseEntity<String> response = restTemplate.exchange(new RequestEntity<Void>(headers, GET, new URI("http://localhost:" + port + "/identity-providers.json")), String.class);
     assertEquals(401, response.getStatusCode().value());
   }
 

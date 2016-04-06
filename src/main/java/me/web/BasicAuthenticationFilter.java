@@ -1,19 +1,18 @@
 package me.web;
 
-import me.model.AccessNotAllowedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.filter.OncePerRequestFilter;
+import static java.util.Base64.getDecoder;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.regex.Pattern;
 
-import static java.util.Base64.getDecoder;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import me.model.AccessNotAllowedException;
 
 public class BasicAuthenticationFilter extends OncePerRequestFilter {
 
