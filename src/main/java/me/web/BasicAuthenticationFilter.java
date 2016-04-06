@@ -16,7 +16,7 @@ import me.model.AccessNotAllowedException;
 
 public class BasicAuthenticationFilter extends OncePerRequestFilter {
 
-  private final Pattern pattern = Pattern.compile("/health|/jsError");
+  private final Pattern pattern = Pattern.compile("/health|/jsError|/info");
 
   private final String userName;
   private final String password;
