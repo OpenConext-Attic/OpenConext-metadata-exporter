@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import org.springframework.http.HttpHeaders;
 
+@SuppressWarnings("serial")
 public class PrePopulatedJsonHttpHeaders extends HttpHeaders {
 
   public PrePopulatedJsonHttpHeaders(String[]... headers) {

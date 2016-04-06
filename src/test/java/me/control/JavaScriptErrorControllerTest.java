@@ -55,7 +55,7 @@ public class JavaScriptErrorControllerTest extends AbstractIntegrationTest {
   }
 
   private void doTestReportJsError(Map<String, String> body, int expectedStatus) throws URISyntaxException {
-    ResponseEntity<Void> response = new TestRestTemplate().exchange(new RequestEntity(body, headers, POST, new URI("http://localhost:" + port + "/jsError")), Void.class);
+    ResponseEntity<Void> response = new TestRestTemplate().exchange(new RequestEntity<Map<String, String>>(body, headers, POST, new URI("http://localhost:" + port + "/jsError")), Void.class);
     assertEquals(expectedStatus, response.getStatusCode().value());
   }
 }
