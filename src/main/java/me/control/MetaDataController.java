@@ -7,9 +7,10 @@ import static org.springframework.scheduling.support.TaskUtils.decorateTaskWithE
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.TemporalAccessor;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,12 +56,12 @@ public class MetaDataController {
   }
 
   @RequestMapping(method = RequestMethod.HEAD, value = "/identity-providers.json")
-  public ResponseEntity identityProvidersHead(HttpServletRequest request) {
+  public ResponseEntity<Void> identityProvidersHead(HttpServletRequest request) {
     return isModified(request, identityProvidersLastUpdated);
   }
 
   @RequestMapping(method = RequestMethod.HEAD, value = "/service-providers.json")
-  public ResponseEntity serviceProvidersHead(HttpServletRequest request) {
+  public ResponseEntity<Void> serviceProvidersHead(HttpServletRequest request) {
     return isModified(request, serviceProvidersLastUpdated);
   }
 
@@ -109,16 +110,27 @@ public class MetaDataController {
     LOG.info("Finished refreshing metadata in " + (System.currentTimeMillis() - start) + " ms");
   }
 
-  private ResponseEntity isModified(HttpServletRequest request, ZonedDateTime lastUpdated) {
-    HttpStatus statusCode = HttpStatus.OK;
+  private ResponseEntity<Void> isModified(HttpServletRequest request, ZonedDateTime lastUpdated) {
+    HttpStatus statusCode = getModifiedSinceHeader(request)
+        .map(modifiedSince -> lastUpdated.isBefore(modifiedSince) ? HttpStatus.NOT_MODIFIED : HttpStatus.OK)
+        .orElse(HttpStatus.OK);
+
+    return ResponseEntity.status(statusCode).build();
+  }
+
+  private Optional<ZonedDateTime> getModifiedSinceHeader(HttpServletRequest request) {
     String ifModifiedSince = request.getHeader(HttpHeaders.IF_MODIFIED_SINCE);
-    if (StringUtils.hasText(ifModifiedSince)) {
-      TemporalAccessor temporal = RFC_1123_DATE_TIME.parse(ifModifiedSince);
-      if (lastUpdated.isBefore(ZonedDateTime.from(temporal))) {
-        statusCode = HttpStatus.NOT_MODIFIED;
-      }
+
+    if (!StringUtils.hasText(ifModifiedSince)) {
+      return Optional.empty();
     }
-    return new ResponseEntity(statusCode);
+
+    try {
+      return Optional.of(ZonedDateTime.from(RFC_1123_DATE_TIME.parse(ifModifiedSince)));
+    } catch (DateTimeParseException e) {
+      // could not parse the modified since header, pretend it wasn't there
+      return Optional.empty();
+    }
   }
 
   //we need to assure we don't get called to deliver metadata when the timer has not been hit
