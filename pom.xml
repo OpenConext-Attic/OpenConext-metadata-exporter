@@ -4,7 +4,7 @@
 
     <groupId>org.openconext</groupId>
     <artifactId>metadata-exporter</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.0.3</version>
     <packaging>jar</packaging>
 
     <name>metadata-exporter</name>
@@ -21,7 +21,7 @@
       <connection>scm:git:git@github.com:OpenConext/OpenConext-metadata-exporter.git</connection>
       <url>scm:git:git@github.com:OpenConext/OpenConext-metadata-exporter.git</url>
       <developerConnection>scm:git:git@github.com:OpenConext/OpenConext-metadata-exporter.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>2.0.3</tag>
     </scm>
 
     <properties>
