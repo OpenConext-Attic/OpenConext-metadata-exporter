@@ -27,5 +27,4 @@ public abstract class AbstractIntegrationTest {
 
   protected static HttpHeaders headers = new PrePopulatedJsonHttpHeaders();
 
-
 }
