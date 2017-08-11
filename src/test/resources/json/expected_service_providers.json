@@ -2,7 +2,7 @@
   "entityid" : "https://mock-sp",
   "state" : "prodaccepted",
   "allowedall" : "yes",
-  "attributes" : [ "urn:mace:dir:attribute-def:displayName", "urn:mace:dir:attribute-def:mail", "urn:mace:dir:attribute-def:isMemberOf", "urn:mace:dir:attribute-def:uid" ],
+  "attributes" : [ "urn:mace:dir:attribute-def:displayName", "urn:mace:dir:attribute-def:isMemberOf", "urn:mace:dir:attribute-def:mail", "urn:mace:dir:attribute-def:uid" ],
   "coin:attribute_aggregation_required" : "0",
   "coin:institution_id" : "mock",
   "coin:policy_enforcement_decision_required" : "1",
